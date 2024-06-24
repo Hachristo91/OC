@@ -26,6 +26,7 @@ class Movement extends Phaser.Scene {
         this.wave1 = false;
         this.wave2 = false;
         this.wave3 = false;
+        this.gameOver = false;
         this.waveBuffer = 0;
 
     }
@@ -97,6 +98,14 @@ class Movement extends Phaser.Scene {
 
         this.add.image(400, 300, "background").setScale(3.1, 2.4);
 
+        this.gameOverText = this.add.text(400, 300, "You Win! Press R to restart", {
+            fontFamily: 'Times, serif',
+            fontSize: 24,
+            wordWrap: {
+                width: 60
+            }
+        });
+        this.gameOverText.setVisible(false);
 
         my.sprite.body = this.add.sprite(game.config.width/2, game.config.height - 40, "spaceTwoParts", "spaceShips_006.png");
         my.sprite.body.setScale(0.5);
@@ -127,6 +136,30 @@ class Movement extends Phaser.Scene {
                 width: 60
             }
         });
+
+        this.input.keyboard.on('keydown-R', () => {
+            this.resetGame();
+        }, this);
+    }
+
+    resetGame(){
+        this.score = 0;
+        this.kills = 0;
+
+        this.frame = 0;
+
+        this.chargeStart = 0;
+        this.chargeTime = 0;
+        this.reloadTime = 31;
+        this.fireTime = 0;
+
+        this.wave1 = false;
+        this.wave2 = false;
+        this.wave3 = false;
+        this.gameOver = false;
+        this.waveBuffer = 0;
+        this.gameOverText.setVisible(false);
+        this.updateScore();
     }
 
     update() {
@@ -331,6 +364,11 @@ class Movement extends Phaser.Scene {
             } else {
                 this.waveBuffer++;
             }
+        }
+
+        if(this.kills == 9 && this.gameOver == false){
+            this.gameOver = true;
+            this.gameOverText.setVisible(true);
         }
 
         for (let bullet of my.sprite.bullet) {
